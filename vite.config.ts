@@ -11,6 +11,10 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
+      fs: {
+        // Deny access to api folder (Vercel serverless functions)
+        deny: ['api'],
+      },
     },
     plugins: [react()],
     // Explicitly define env variables for build
@@ -25,6 +29,9 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, '.'),
       }
     },
+    optimizeDeps: {
+      exclude: ['api']
+    },
     build: {
       minify: 'terser',
       terserOptions: {
@@ -37,6 +44,8 @@ export default defineConfig(({ mode }) => {
         },
       },
       rollupOptions: {
+        // Exclude api folder from build
+        external: [/^api\/.*/],
         plugins: isProd ? [
           obfuscatorPlugin({
             options: {

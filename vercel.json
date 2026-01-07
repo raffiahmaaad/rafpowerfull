@@ -3,14 +3,14 @@
     "outputDirectory": "dist",
     "framework": "vite",
     "functions": {
-        "vercel-api/**/*.ts": {
+        "api/**/*.ts": {
             "runtime": "@vercel/node@3.0.0"
         }
     },
     "rewrites": [
         {
             "source": "/api/tempmail/:path*",
-            "destination": "/vercel-api/tempmail/:path*"
+            "destination": "/api/tempmail/:path*"
         },
         {
             "source": "/(.*)",
