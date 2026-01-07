@@ -1,0 +1,9 @@
+name = "vaultmail-forwarder"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# Target URL untuk webhook - ganti dengan Vercel app URL Anda
+TARGET_URL = "https://raf-tools.vercel.app/api/tempmail/webhook"
+# Domain yang digunakan
+DOMAIN = "nexshoes.my.id"

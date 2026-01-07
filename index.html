@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RafTools | by. Leraie</title>
+    <!-- Cloudflare Turnstile for bot protection -->
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+            colors: {
+              cyber: {
+                black: "#0a0a0f",
+                dark: "#13131f",
+                panel: "#1c1c2e",
+                primary: "#00f0ff", // Cyan
+                secondary: "#ff003c", // Pink
+                dim: "rgba(0, 240, 255, 0.1)",
+                text: "#e0e0e0",
+              },
+            },
+            animation: {
+              "pulse-fast": "pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              glitch: "glitch 1s linear infinite",
+            },
+            keyframes: {
+              glitch: {
+                "2%, 64%": { transform: "translate(2px,0) skew(0deg)" },
+                "4%, 60%": { transform: "translate(-2px,0) skew(0deg)" },
+                "62%": { transform: "translate(0,0) skew(5deg)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #0a0a0f;
+        color: #e0e0e0;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0c0c0e;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #1e1e2e;
+        border-radius: 4px;
+        border: 1px solid #2d2d3d;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #2d2d3d;
+      }
+
+      /* Custom scrollbar for dark containers */
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+
+      .animate-fade-in-up {
+        animation: fadeInUp 0.4s ease-out forwards;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "react/": "https://esm.sh/react@^19.2.3/",
+          "react": "https://esm.sh/react@^19.2.3",
+          "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+          "lucide-react": "https://esm.sh/lucide-react@^0.561.0",
+          "react-hot-toast": "https://esm.sh/react-hot-toast@^2.6.0",
+          "hono/": "https://esm.sh/hono@^4.11.1/",
+          "hono": "https://esm.sh/hono@^4.11.1"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>

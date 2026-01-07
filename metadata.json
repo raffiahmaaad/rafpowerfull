@@ -1,0 +1,5 @@
+{
+  "name": "GhostMail - Disposable Email Service",
+  "description": "A cyberpunk-themed disposable email service powered by Cloudflare Workers, KV, and Email Routing. Generates temporary aliases that auto-expire.",
+  "requestFramePermissions": []
+}

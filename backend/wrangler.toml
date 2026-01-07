@@ -1,0 +1,52 @@
+name = "ghostmail-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# KV Namespace untuk menyimpan alias metadata
+# Jalankan: npx wrangler kv:namespace create "GHOSTMAIL_KV"
+# Lalu ganti YOUR_KV_ID_HERE dengan ID yang diberikan
+kv_namespaces = [
+  { binding = "GHOSTMAIL_KV", id = "dc01ccefeaf84014aa33e87dc3c88ff0" }
+]
+
+# D1 Database for users, email history, domains
+[[d1_databases]]
+binding = "DB"
+database_name = "ghostmail-db"
+database_id = "37d7c46e-1895-401b-a7b9-f757e87447ac"
+
+# Cron trigger untuk cleanup alias yang sudah expired
+# Berjalan setiap 10 menit
+[triggers]
+crons = ["*/10 * * * *"]
+
+# Email binding untuk menerima email (Email Workers)
+# Pastikan di Cloudflare Dashboard Email Routing -> Email Workers sudah dikonfigurasi
+[[send_email]]
+name = "SEND_EMAIL"
+
+# Environment Variables (non-sensitive)
+# Ganti nilai-nilai di bawah dengan data Anda
+[vars]
+# Zone ID domain Anda (dari Cloudflare Dashboard -> domain -> Overview -> sidebar kanan)
+CLOUDFLARE_ZONE_ID = "4e872da5ca5cdd25b2f755abd14cda1c"
+
+# Account ID Anda (dari Cloudflare Dashboard -> Overview -> sidebar kanan)  
+CLOUDFLARE_ACCOUNT_ID = "603033dbdb14529fa3d5afaafe774ef8"
+
+# Email Gmail tujuan forwarding (email yang akan menerima semua email)
+DESTINATION_EMAIL = "raffi.campus@gmail.com"
+
+# Domain yang digunakan untuk temporary email
+DOMAIN = "rafxyz.biz.id"
+
+# PENTING: API Token harus disimpan sebagai secret, BUKAN di file ini
+# Jalankan: npx wrangler secret put CLOUDFLARE_API_TOKEN
+# Lalu masukkan API token Anda
+
+# Workers Logs - untuk monitoring dan debugging
+[observability]
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
