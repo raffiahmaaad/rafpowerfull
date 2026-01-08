@@ -124,13 +124,25 @@ export const VaultMailInbox: React.FC<VaultMailInboxProps> = ({ onBack }) => {
     toast.success("Copied to clipboard");
   };
 
+  // Use production API when running locally (Vite doesn't serve serverless functions)
+  const getApiBaseUrl = () => {
+    if (
+      typeof window !== "undefined" &&
+      window.location.hostname === "localhost"
+    ) {
+      return "https://rafpowerfull.vercel.app";
+    }
+    return "";
+  };
+
   // Fetch emails from VaultMail API
   const fetchEmails = useCallback(async () => {
     if (!address) return;
     try {
       setLoading(true);
+      const apiBase = getApiBaseUrl();
       const res = await fetch(
-        `/api/tempmail/inbox?address=${encodeURIComponent(address)}`
+        `${apiBase}/api/tempmail/inbox?address=${encodeURIComponent(address)}`
       );
       const data = await res.json();
       if (data.emails) {

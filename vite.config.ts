@@ -15,6 +15,9 @@ export default defineConfig(({ mode }) => {
         // Deny access to api folder (Vercel serverless functions)
         deny: ['api'],
       },
+      watch: {
+        ignored: ['**/api/**', '**/worker/**'],
+      },
     },
     plugins: [react()],
     // Explicitly define env variables for build
@@ -31,6 +34,9 @@ export default defineConfig(({ mode }) => {
     },
     optimizeDeps: {
       exclude: ['api']
+    },
+    esbuild: {
+      exclude: /api\/.*/,
     },
     build: {
       minify: 'terser',

@@ -10,13 +10,25 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '',
 });
 
+// CORS headers for cross-origin requests (localhost development)
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 export const config = {
   runtime: 'edge',
 };
 
 export default async function handler(req: Request) {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 200, headers: corsHeaders });
+  }
+
   if (req.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders });
   }
 
   const { searchParams } = new URL(req.url);
@@ -25,7 +37,7 @@ export default async function handler(req: Request) {
   if (!address) {
     return new Response(JSON.stringify({ error: 'Address required' }), { 
       status: 400,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
     });
   }
 
@@ -37,14 +49,15 @@ export default async function handler(req: Request) {
       status: 200,
       headers: { 
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        ...corsHeaders
       }
     });
   } catch (error) {
     console.error('Inbox Error:', error);
     return new Response(JSON.stringify({ emails: [] }), { 
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
     });
   }
 }

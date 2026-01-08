@@ -66,11 +66,23 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
     toast.success("Domain removed");
   };
 
+  // Use production API when running locally
+  const getApiBaseUrl = () => {
+    if (
+      typeof window !== "undefined" &&
+      window.location.hostname === "localhost"
+    ) {
+      return "https://rafpowerfull.vercel.app";
+    }
+    return "";
+  };
+
   const handleRetentionSave = async (seconds: number) => {
     setRetention(seconds);
     setSaving(true);
     try {
-      await fetch("/api/tempmail/settings", {
+      const apiBase = getApiBaseUrl();
+      await fetch(`${apiBase}/api/tempmail/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
