@@ -158,7 +158,7 @@ export const VaultMailInbox: React.FC<VaultMailInboxProps> = ({ onBack }) => {
   // Initial fetch and auto-refresh
   useEffect(() => {
     fetchEmails();
-    const interval = setInterval(fetchEmails, 3000); // Poll every 3 seconds
+    const interval = setInterval(fetchEmails, 2000); // Poll every  seconds
     return () => clearInterval(interval);
   }, [fetchEmails]);
 
