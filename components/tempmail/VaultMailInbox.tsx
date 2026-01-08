@@ -158,7 +158,7 @@ export const VaultMailInbox: React.FC<VaultMailInboxProps> = ({ onBack }) => {
   // Initial fetch and auto-refresh
   useEffect(() => {
     fetchEmails();
-    const interval = setInterval(fetchEmails, 2000); // Poll every  seconds
+    const interval = setInterval(fetchEmails, 2000); // Poll every 2 seconds
     return () => clearInterval(interval);
   }, [fetchEmails]);
 
@@ -251,7 +251,7 @@ export const VaultMailInbox: React.FC<VaultMailInboxProps> = ({ onBack }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 relative">
             <button
               onClick={copyAddress}
               className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-cyber-primary/10 border border-cyber-primary/30 text-cyber-primary rounded-lg hover:bg-cyber-primary/20 transition-all text-sm font-medium"
@@ -271,18 +271,103 @@ export const VaultMailInbox: React.FC<VaultMailInboxProps> = ({ onBack }) => {
             >
               <Settings className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => setShowHistory(!showHistory)}
-              className={`relative p-2 bg-cyber-dark/80 border border-cyber-primary/20 text-gray-400 rounded-lg hover:text-cyber-primary hover:border-cyber-primary/40 transition-all ${
-                showHistory ? "text-cyber-primary border-cyber-primary/40" : ""
-              }`}
-              title="History"
-            >
-              <History className="w-4 h-4" />
-              {history.length > 0 && (
-                <span className="absolute top-1 right-1 h-2 w-2 bg-cyber-primary rounded-full" />
+            <div className="relative">
+              <button
+                onClick={() => setShowHistory(!showHistory)}
+                className={`p-2 bg-cyber-dark/80 border border-cyber-primary/20 text-gray-400 rounded-lg hover:text-cyber-primary hover:border-cyber-primary/40 transition-all ${
+                  showHistory
+                    ? "text-cyber-primary border-cyber-primary/40"
+                    : ""
+                }`}
+                title="History"
+              >
+                <History className="w-4 h-4" />
+                {history.length > 0 && (
+                  <span className="absolute top-1 right-1 h-2 w-2 bg-cyber-primary rounded-full" />
+                )}
+              </button>
+
+              {/* History Dropdown - positioned relative to button */}
+              {showHistory && (
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 bg-black/50 z-[60]"
+                    onClick={() => setShowHistory(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-2 w-80 bg-cyber-dark border border-cyber-primary/20 rounded-xl shadow-2xl z-[70] max-h-[400px] overflow-hidden">
+                    <div className="flex justify-between items-center px-4 py-3 border-b border-cyber-primary/10">
+                      <span className="text-xs font-bold tracking-wider uppercase text-gray-400">
+                        History
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {history.length > 0 && (
+                          <button
+                            onClick={() => {
+                              setHistory([]);
+                              localStorage.removeItem("vaultmail_history");
+                            }}
+                            className="text-[10px] uppercase font-bold text-red-400 hover:text-red-300"
+                          >
+                            Clear All
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setShowHistory(false)}
+                          className="p-1 text-gray-400 hover:text-white"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto p-2">
+                      {history.length === 0 ? (
+                        <div className="p-6 text-center text-gray-500 text-sm">
+                          No history
+                        </div>
+                      ) : (
+                        history.map((histAddr) => (
+                          <div
+                            key={histAddr}
+                            className="flex items-center gap-2 p-3 md:p-2 rounded-lg hover:bg-white/5 active:bg-white/10 cursor-pointer group"
+                            onClick={() => {
+                              setAddress(histAddr);
+                              const parts = histAddr.split("@");
+                              if (parts[1]) setDomain(parts[1]);
+                              localStorage.setItem(
+                                "vaultmail_address",
+                                histAddr
+                              );
+                              setShowHistory(false);
+                            }}
+                          >
+                            <span className="flex-1 text-sm font-mono text-gray-300 truncate">
+                              {histAddr}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const newHist = history.filter(
+                                  (h) => h !== histAddr
+                                );
+                                setHistory(newHist);
+                                localStorage.setItem(
+                                  "vaultmail_history",
+                                  JSON.stringify(newHist)
+                                );
+                              }}
+                              className="p-1 text-red-400 hover:text-red-300 opacity-50 md:opacity-0 group-hover:opacity-100"
+                            >
+                              <Trash2 className="w-4 h-4 md:w-3 md:h-3" />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </>
               )}
-            </button>
+            </div>
           </div>
 
           {/* Retention Info */}
@@ -294,82 +379,6 @@ export const VaultMailInbox: React.FC<VaultMailInboxProps> = ({ onBack }) => {
             </span>
           </div>
         </div>
-
-        {/* History Dropdown */}
-        {showHistory && (
-          <>
-            {/* Backdrop for mobile */}
-            <div
-              className="fixed inset-0 bg-black/50 z-40 md:hidden"
-              onClick={() => setShowHistory(false)}
-            />
-            <div className="fixed md:absolute left-2 right-2 md:left-auto md:right-0 top-auto bottom-4 md:bottom-auto md:top-full mt-0 md:mt-2 w-auto md:w-80 bg-cyber-dark border border-cyber-primary/20 rounded-xl shadow-2xl z-50 max-h-[70vh] md:max-h-[400px] overflow-hidden">
-              <div className="flex justify-between items-center px-4 py-3 border-b border-cyber-primary/10">
-                <span className="text-xs font-bold tracking-wider uppercase text-gray-400">
-                  History
-                </span>
-                <div className="flex items-center gap-2">
-                  {history.length > 0 && (
-                    <button
-                      onClick={() => {
-                        setHistory([]);
-                        localStorage.removeItem("vaultmail_history");
-                      }}
-                      className="text-[10px] uppercase font-bold text-red-400 hover:text-red-300"
-                    >
-                      Clear All
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setShowHistory(false)}
-                    className="md:hidden p-1 text-gray-400 hover:text-white"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <div className="max-h-60 overflow-y-auto p-2">
-                {history.length === 0 ? (
-                  <div className="p-6 text-center text-gray-500 text-sm">
-                    No history
-                  </div>
-                ) : (
-                  history.map((histAddr) => (
-                    <div
-                      key={histAddr}
-                      className="flex items-center gap-2 p-3 md:p-2 rounded-lg hover:bg-white/5 active:bg-white/10 cursor-pointer group"
-                      onClick={() => {
-                        setAddress(histAddr);
-                        const parts = histAddr.split("@");
-                        if (parts[1]) setDomain(parts[1]);
-                        localStorage.setItem("vaultmail_address", histAddr);
-                        setShowHistory(false);
-                      }}
-                    >
-                      <span className="flex-1 text-sm font-mono text-gray-300 truncate">
-                        {histAddr}
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newHist = history.filter((h) => h !== histAddr);
-                          setHistory(newHist);
-                          localStorage.setItem(
-                            "vaultmail_history",
-                            JSON.stringify(newHist)
-                          );
-                        }}
-                        className="p-1 text-red-400 hover:text-red-300 opacity-50 md:opacity-0 group-hover:opacity-100"
-                      >
-                        <Trash2 className="w-4 h-4 md:w-3 md:h-3" />
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </>
-        )}
 
         {/* Inbox List */}
         <div className="flex-1 overflow-y-auto">
